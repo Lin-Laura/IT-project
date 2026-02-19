@@ -1,0 +1,7 @@
+brew install sbt
+JAVA_HOME=$(/usr/libexec/java_home -v 11) sbt -Dsbt.server=false
+JAVA_HOME=$(/usr/libexec/java_home -v 11) ./sbt -Dsbt.server=false
+compile
+run
+exit
+run
