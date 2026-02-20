@@ -7,6 +7,9 @@ import demo.CommandDemo;
 import demo.Loaders_2024_Check;
 import structures.GameState;
 
+//need to import BasicObjectBuilders
+import utils.BasicObjectBuilders;
+
 /**
  * Indicates that both the core game loop in the browser is starting, meaning
  * that it is ready to recieve commands from the back-end.
@@ -25,6 +28,16 @@ public class Initalize implements EventProcessor{
 		// hello this is a change
 		
 		gameState.gameInitalised = true;
+
+		//HG - populate the board skeleton created in GameState.java
+		for (int x = 0; x < 9; x++){
+			for (int y = 0; y < 5; y++){
+				gameState.board[x][y] = BasicObjectBuilders.loadTile(x, y);
+			}
+		}
+
+		//HG - human player gets the first turn
+		gameState.isHumanPlayerTurn = true;
 		
 		gameState.something = true;
 		
