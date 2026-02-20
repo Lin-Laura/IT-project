@@ -27,6 +27,10 @@ public class Tile {
 	int height;
 	int tilex;
 	int tiley;
+	//need to create highlighted attribute
+	int highlighted;
+	// 0 = none, 1 = white highlight, 2 = red highlight 
+	//int initalizes to 0, default for tiles will be none
 	
 	public Tile() {}
 	
@@ -93,6 +97,14 @@ public class Tile {
 	}
 	public void setTiley(int tiley) {
 		this.tiley = tiley;
+	}
+
+	public int getHighlighted(){
+		return highlighted;
+	}
+
+	public void setHighlighted(int highlighted){
+		this.highlighted = highlighted;
 	}
 	
 	/**
