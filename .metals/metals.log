@@ -675,3 +675,8 @@ WARNING: Unmatched cancel notification for request id 808
 2026.02.20 14:43:03 WARN  no build target for: /Users/hopegeissler/Documents/GitHub/IT+ Group Project/IT-project/project/plugins.sbt
 2026.02.20 14:43:03 INFO  no build target found for /Users/hopegeissler/Documents/GitHub/IT+ Group Project/IT-project/app/structures/basic/Tile.java. Using fallback presentation compiler.
 2026.02.20 14:43:06 INFO  no build target found for /Users/hopegeissler/Documents/GitHub/IT+ Group Project/IT-project/app/structures/basic/Tile.java. Using fallback presentation compiler.
+2026.02.20 14:44:15 WARN  no build target for: /Users/hopegeissler/Documents/GitHub/IT+ Group Project/IT-project/app/structures/basic/Tile.java
+2026.02.20 14:44:15 INFO  no build target found for /Users/hopegeissler/Documents/GitHub/IT+ Group Project/IT-project/app/structures/basic/Tile.java. Using fallback presentation compiler.
+2026.02.20 14:44:15 WARN  Running javac-semanticdb failed for file:///Users/hopegeissler/Documents/GitHub/IT+%20Group%20Project/IT-project/app/structures/basic/Tile.java. Output:
+
+2026.02.20 14:44:16 INFO  no build target found for /Users/hopegeissler/Documents/GitHub/IT+ Group Project/IT-project/app/structures/basic/Tile.java. Using fallback presentation compiler.
