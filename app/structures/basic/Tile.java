@@ -27,10 +27,10 @@ public class Tile {
 	int height;
 	int tilex;
 	int tiley;
-	//HG - need to create highlighted attribute
+	//HG - need to create highlighted attribute (SC8)
 	int highlighted;
-	// HG - 0 = none, 1 = white highlight, 2 = red highlight 
-	//HG - int initalizes to 0, default for tiles will be none
+	// HG - 0 = none, 1 = white highlight, 2 = red highlight (SC8)
+	//HG - int initalizes to 0, default for tiles will be none (SC8)
 	
 	public Tile() {}
 	
@@ -99,7 +99,7 @@ public class Tile {
 		this.tiley = tiley;
 	}
 
-	//HG - highlighted getters and setters
+	//HG - highlighted getters and setters (SC8)
 	public int getHighlighted(){
 		return highlighted;
 	}

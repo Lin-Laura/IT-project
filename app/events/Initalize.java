@@ -7,7 +7,7 @@ import demo.CommandDemo;
 import demo.Loaders_2024_Check;
 import structures.GameState;
 
-//need to import BasicObjectBuilders
+// HG - need to import BasicObjectBuilders (SC8)
 import utils.BasicObjectBuilders;
 
 /**
@@ -29,14 +29,14 @@ public class Initalize implements EventProcessor{
 		
 		gameState.gameInitalised = true;
 
-		//HG - populate the board skeleton created in GameState.java
+		//HG - populate the board skeleton created in GameState.java (SC8)
 		for (int x = 0; x < 9; x++){
 			for (int y = 0; y < 5; y++){
 				gameState.board[x][y] = BasicObjectBuilders.loadTile(x, y);
 			}
 		}
 
-		//HG - human player gets the first turn
+		//HG - human player gets the first turn (SC8)
 		gameState.isHumanPlayerTurn = true;
 		
 		gameState.something = true;
