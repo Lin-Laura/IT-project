@@ -46,7 +46,7 @@ public class TileClicked implements EventProcessor{
 
 	}
 	// HG - sets highlight state = 0 on each Tile and shows correct state to player with BasicCommands (SC8)
-	public static void clearBoardHighlights (ActorRed out, GameState gameState){
+	public static void clearBoardHighlights (ActorRef out, GameState gameState){
 		for (int x = 0; x < 9; x++){
 			for (int y =0; y < 5; y ++){
 				Tile tile = gameState.board[x][y];
