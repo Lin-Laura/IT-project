@@ -7,7 +7,7 @@ import akka.actor.ActorRef;
 import structures.GameState;
 
 //HG - need to import Basic Commands and Tile (SC8)
-import comands.BasicCommands;
+import commands.BasicCommands;
 import structures.basic.Tile;
 
 /**
