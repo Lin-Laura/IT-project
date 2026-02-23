@@ -101,7 +101,10 @@ public class CoreGameState {
             }
         }
 
-        // 2) reset players (minimal defaults; may be changed later)
+        // 2) reset players
+        human.setHealth(20);
+        ai.setHealth(20);
+
         human.setMana(0);
         ai.setMana(0);
 

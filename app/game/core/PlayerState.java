@@ -33,6 +33,7 @@ public class PlayerState {
     public void addMana(int amount) { this.mana += amount; }
 
     public void takeDamage(int amount) { this.health -= amount; }
+    public void setHealth(int health) { this.health = health; }
 
     public List<String> hand() { return hand; }
     public List<String> deck() { return deck; }
