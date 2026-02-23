@@ -19,7 +19,7 @@ public class Initialize implements EventProcessor {
         // 1) Mark initialized (used by template tests)
         gameState.gameInitialized = true;
 
-        // optional dummy flag (safe)
+
         gameState.something = true;
 
         // 2) Get core state

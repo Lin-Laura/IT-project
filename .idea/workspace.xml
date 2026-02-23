@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="42ddb3f5-dc7e-4384-aea9-8ef6f3d76546" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/app/events/EndTurnClicked.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/events/EndTurnClicked.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/events/Initialize.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/events/Initialize.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/game/core/CoreGameState.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/game/core/CoreGameState.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -218,7 +220,7 @@
       <workItem from="1771805871735" duration="3000" />
       <workItem from="1771805933531" duration="5628000" />
       <workItem from="1771811870601" duration="1024000" />
-      <workItem from="1771882463240" duration="1086000" />
+      <workItem from="1771882463240" duration="2313000" />
     </task>
     <servers />
   </component>

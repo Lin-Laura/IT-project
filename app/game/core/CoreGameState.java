@@ -24,7 +24,7 @@ public class CoreGameState {
     public CoreGameState() {
         this.board = new UnitState[BOARD_WIDTH][BOARD_HEIGHT];
 
-        // default values (can be adjusted later)
+        // default values
         this.human = new PlayerState(Owner.HUMAN, 20);
         this.ai = new PlayerState(Owner.AI, 20);
 
@@ -203,7 +203,7 @@ public class CoreGameState {
         return res;
     }
 
-    // (Optional) internal access — try not to use in other modules
+    // internal access — try not to use in other modules
     UnitState[][] _boardInternal() {
         return board;
     }
