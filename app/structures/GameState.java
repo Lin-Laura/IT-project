@@ -1,17 +1,26 @@
 package structures;
 
+import game.core.CoreGameState;
+
 /**
- * This class can be used to hold information about the on-going game.
- * Its created with the GameActor.
- * 
- * @author Dr. Richard McCreadie
- *
+ * Template-facing wrapper.
+ * Keep this class stable: other modules import structures.GameState.
  */
 public class GameState {
 
-	
-	public boolean gameInitalised = false;
-	
+	// ---- Compatibility flags (events may still reference these) ----
+	public boolean gameInitialized = false;   // MUST match Initiali！z！e.java spelling
 	public boolean something = false;
-	
+
+	// ---- Real game data ----
+	private final CoreGameState core;
+	public boolean gameInitalized;
+
+	public GameState() {
+		this.core = new CoreGameState();
+	}
+
+	public CoreGameState core() {
+		return core;
+	}
 }

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="sbt: org.webjars:explorercanvas:r3-1:jar" type="java-imported" external-system-id="SBT">
+    <properties groupId="org.webjars" artifactId="explorercanvas" version="r3-1" baseVersion="r3-1" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/webjars/explorercanvas/r3-1/explorercanvas-r3-1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,6 +1,6 @@
 // @GENERATOR:play-routes-compiler
-// @SOURCE:/Users/wanglin/Desktop/5074 IT+ Team Project/ITSD-DT2025-26-Template/conf/routes
-// @DATE:Mon Feb 16 14:24:48 GMT 2026
+// @SOURCE:/Users/wanglin/Documents/GitHub/IT project/conf/routes
+// @DATE:Mon Feb 23 00:19:06 GMT 2026
 
 package controllers;
 

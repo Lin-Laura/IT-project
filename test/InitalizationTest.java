@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import commands.BasicCommands;
 import commands.CheckMessageIsNotNullOnTell;
-import events.Initalize;
+import events.Initialize;
 import play.libs.Json;
 import structures.GameState;
 import structures.basic.Tile;
@@ -38,15 +38,15 @@ public class InitalizationTest {
 		// As we are not starting the front-end, we have no GameActor, so lets manually create
 		// the components we want to test
 		GameState gameState = new GameState(); // create state storage
-		Initalize initalizeProcessor =  new Initalize(); // create an initalize event processor
+		Initialize initalizeProcessor =  new Initialize(); // create an initalize event processor
 		
-		assertFalse(gameState.gameInitalised); // check we have not initalized
+		assertFalse(gameState.gameInitialized); // check we have not initalized
 		
 		// lets simulate recieveing an initalize message
 		ObjectNode eventMessage = Json.newObject(); // create a dummy message
 		initalizeProcessor.processEvent(null, gameState, eventMessage); // send it to the initalize event processor
 		
-		assertTrue(gameState.gameInitalised); // check that this updated the game state
+		assertTrue(gameState.gameInitialized); // check that this updated the game state
 		
 		// lets also check that running commands don't actually do anything, since we have no front-end
 		Tile tile = BasicObjectBuilders.loadTile(3, 2); // create a tile

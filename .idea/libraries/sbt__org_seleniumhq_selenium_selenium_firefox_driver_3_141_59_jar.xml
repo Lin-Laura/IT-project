@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="sbt: org.seleniumhq.selenium:selenium-firefox-driver:3.141.59:jar" type="java-imported" external-system-id="SBT">
+    <properties groupId="org.seleniumhq.selenium" artifactId="selenium-firefox-driver" version="3.141.59" baseVersion="3.141.59" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/seleniumhq/selenium/selenium-firefox-driver/3.141.59/selenium-firefox-driver-3.141.59.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/seleniumhq/selenium/selenium-firefox-driver/3.141.59/selenium-firefox-driver-3.141.59-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
