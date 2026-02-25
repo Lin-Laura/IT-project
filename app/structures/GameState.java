@@ -12,6 +12,12 @@ public class GameState {
 	public boolean gameInitialized = false;   // MUST match Initiali！z！e.java spelling
 	public boolean something = false;
 
+	// ---- Game end state ----
+	public boolean gameOver = false;
+	public game.core.Owner winner = null; // HUMAN or AI
+
+	
+
 	// ---- Real game data ----
 	private final CoreGameState core;
 	public boolean gameInitalized;

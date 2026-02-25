@@ -70,7 +70,11 @@ public class PlayerState {
             return cardId;
         }
 
-        // hand full → card discarded
+        // hand full -> card discarded
         return null;
     }
-}
+
+        public boolean isDead() {
+        return health <= 0;
+        }
+    }
