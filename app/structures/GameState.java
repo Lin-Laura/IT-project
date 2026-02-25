@@ -16,7 +16,16 @@ public class GameState {
 	public boolean gameOver = false;
 	public game.core.Owner winner = null; // HUMAN or AI
 
-	
+	// --- Card selection state ---
+	public Integer selectedHandPos = null;     // 1..6
+	public String selectedCardConfig = null;   // path to conf/gameconfs/cards/*.json
+	public boolean selectedCardIsUnit = false;
+
+	// --- Unit id generator ---
+	public int nextUnitId = 1000;
+	public int allocateUnitId() {
+    return nextUnitId++;
+	}
 
 	// ---- Real game data ----
 	private final CoreGameState core;
