@@ -47,4 +47,30 @@ public class PlayerState {
     public void removeFromHand(String cardId) {
         hand.remove(cardId);
     }
+
+    /**
+     *  Overdraw
+     *
+     * Draws the top card from the deck.
+     * If hand is full (6 cards), the card is discarded.
+     *
+     * @return cardId if added to hand, null if discarded or deck empty
+     */
+    public String drawTopCardToHand() {
+
+        if (deck.isEmpty()) return null;
+
+        // top of deck = index 0 (deck is not shuffled)
+        String cardId = deck.remove(0);
+
+        // try to add to hand
+        boolean added = addToHand(cardId);
+
+        if (added) {
+            return cardId;
+        }
+
+        // hand full → card discarded
+        return null;
+    }
 }
