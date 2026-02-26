@@ -21,7 +21,7 @@ public final class UnitDeathRules {
             int damageAmount) {
 
         //safety check
-        if (out == null || stateOfGame == null || target == null) return;
+        if (stateOfGame == null || target == null) return;
         if (damageAmount <= 0) return;
 
         //1. backend damage
@@ -29,7 +29,6 @@ public final class UnitDeathRules {
         target.takeDamage(damageAmount);
 
         //2.if backend unit is dead, remove from backend + UI
-        //below means hp<=0
         if (target.isDead())  {
           int deadId = target.id();
           int x = target.x();
@@ -43,7 +42,13 @@ public final class UnitDeathRules {
 
           //remove from UI
           if (uiUnit != null) {
-              BasicCommands.deleteUnit(out,uiUnit);
+
+              //delection of UI only works if out is NOT null
+              if (out != null) {
+                  //used for UI delection
+                  BasicCommands.deleteUnit(out, uiUnit);
+              }
+              //backend cleanup... always remove from mapping
               stateOfGame.uiUnitById.remove(deadId);
           }
         }
