@@ -76,6 +76,11 @@ public class TileClicked implements EventProcessor {
         BasicCommands.setUnitAttack(out, unit, atk);
         BasicCommands.setUnitHealth(out, unit, hp);
 
+        //#13 story
+        //remember this UI unit to delete later if it dies
+        gameState.uiUnitById.put(unitId,unit);
+
+
         // 5) remove card from backend hand
         core.getHuman().hand().remove(selectedPos - 1);
 

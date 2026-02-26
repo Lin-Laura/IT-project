@@ -2,6 +2,12 @@ package structures;
 
 import game.core.CoreGameState;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import game.core.CoreGameState;
+import structures.basic.Unit;
+
 /**
  * Template-facing wrapper.
  * Keep this class stable: other modules import structures.GameState.
@@ -26,6 +32,12 @@ public class GameState {
 	public int allocateUnitId() {
     return nextUnitId++;
 	}
+
+	//story card #13. mapping unitId -> UI Unit object
+	//CoreGameState stores the UnitState,
+	//UI delection will need structures.basic.Unit
+	public final Map<Integer, Unit> uiUnitById = new HashMap<>();
+
 
 	// ---- Real game data ----
 	private final CoreGameState core;
