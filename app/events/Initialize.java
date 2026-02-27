@@ -2,14 +2,20 @@ package events;
 
 import akka.actor.ActorRef;
 import com.fasterxml.jackson.databind.JsonNode;
+import commands.BasicCommands;
 import game.core.CoreGameState;
 import game.core.Owner;
 import game.core.UnitState;
 import structures.GameState;
+import structures.basic.Card;
+import utils.BasicObjectBuilders;
+
+import java.io.File;
+import java.util.Arrays;
 
 /**
  * Initialize event processor.
- * This sets up a clean new game state in our CoreGameState.
+ * Story #1: draw 3 cards at start of Human Turn 1
  */
 public class Initialize implements EventProcessor {
 
@@ -18,33 +24,60 @@ public class Initialize implements EventProcessor {
 
         // 1) Mark initialized (used by template tests)
         gameState.gameInitialized = true;
-
-
         gameState.something = true;
 
         // 2) Get core state
         CoreGameState core = gameState.core();
 
-        // 3) Reset everything to a clean new game
+        // 3) Reset everything
         core.resetGame();
 
-        // 4) Create two generals (placeholder stats)
-        // Convention: HUMAN bottom middle (4,4), AI top middle (4,0)
+        // ----------------------------------------------------
+        // Build decks from conf/gameconfs/cards/
+        // ----------------------------------------------------
+        File dir = new File("conf/gameconfs/cards/");
+        String[] p1 = dir.list((d, name) -> name.startsWith("1_") && name.endsWith(".json"));
+        String[] p2 = dir.list((d, name) -> name.startsWith("2_") && name.endsWith(".json"));
+
+        if (p1 != null) {
+            Arrays.sort(p1); // stable "top of deck"
+            for (String f : p1) core.getHuman().deck().add("conf/gameconfs/cards/" + f);
+        }
+        if (p2 != null) {
+            Arrays.sort(p2);
+            for (String f : p2) core.getAI().deck().add("conf/gameconfs/cards/" + f);
+        }
+
+        // ----------------------------------------------------
+        // Create two generals
+        // ----------------------------------------------------
         UnitState humanGeneral = new UnitState(100, Owner.HUMAN, 4, 4, 2, 20);
         UnitState aiGeneral = new UnitState(200, Owner.AI, 4, 0, 2, 20);
 
-        // 5) Place them on board
         core.placeUnit(humanGeneral, 4, 4);
         core.placeUnit(aiGeneral, 4, 0);
 
-        // 6) Starting mana (minimal default)
+        // ----------------------------------------------------
+        // Start state
+        // ----------------------------------------------------
+        core.setTurn(1, Owner.HUMAN);
+
+        // Story #4 (minimal start) — many templates start with 2 mana
         core.getHuman().setMana(2);
         core.getAI().setMana(2);
 
-        // 7) Starting turn state
-        core.setTurn(1, Owner.HUMAN);
-
-        // 8) Reset actions for current player's units
+        // Reset actions
         core.resetUnitsForNewTurn(core.activePlayer());
+
+        // ----------------------------------------------------
+        // STORY #1: Draw 3 cards at start of Human Turn 1
+        // ----------------------------------------------------
+        for (int pos = 1; pos <= 3; pos++) {
+            String cfg = core.getHuman().drawTopCardToHand(); // Story #2 handles discard when full
+            if (cfg != null) {
+                Card c = BasicObjectBuilders.loadCard(cfg, pos, Card.class);
+                if (c != null) BasicCommands.drawCard(out, c, pos, 0);
+            }
+        }
     }
 }
