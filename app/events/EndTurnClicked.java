@@ -2,9 +2,13 @@ package events;
 
 import akka.actor.ActorRef;
 import com.fasterxml.jackson.databind.JsonNode;
+import commands.BasicCommands;
 import game.core.CoreGameState;
 import game.core.Owner;
 import structures.GameState;
+import structures.basic.Card;
+import structures.basic.Player;
+import utils.BasicObjectBuilders;
 
 public class EndTurnClicked implements EventProcessor {
 
@@ -12,16 +16,49 @@ public class EndTurnClicked implements EventProcessor {
 	public void processEvent(ActorRef out, GameState gameState, JsonNode message) {
 
 		CoreGameState core = gameState.core();
-
-		// (Story #5) mana drain: mana is cleared at the end of the current player's turn
 		Owner current = core.activePlayer();
-		core.getPlayer(current).setMana(0);
 
-		// Switch round
+		// ----------------------------------------------------
+		// Story #1 + #2: draw 1 card at end of turn (discard if hand full => cfg null)
+		// ----------------------------------------------------
+		String cfg = core.getPlayer(current).drawTopCardToHand();
+
+		if (current == Owner.HUMAN && cfg != null) {
+			int pos = core.getHuman().hand().size();
+			Card c = BasicObjectBuilders.loadCard(cfg, pos, Card.class);
+			if (c != null) BasicCommands.drawCard(out, c, pos, 0);
+		}
+
+		// ----------------------------------------------------
+		// Story #5: Mana Drain -> 0 (and update UI)
+		// ----------------------------------------------------
+		if (current == Owner.HUMAN) {
+			core.getHuman().setMana(0);
+			BasicCommands.setPlayer1Mana(out, new Player(core.getHuman().health(), core.getHuman().mana()));
+		} else {
+			core.getAI().setMana(0);
+			BasicCommands.setPlayer2Mana(out, new Player(core.getAI().health(), core.getAI().mana()));
+		}
+
+		// ----------------------------------------------------
+		// Switch turn
+		// ----------------------------------------------------
 		core.nextTurn();
+		Owner next = core.activePlayer();
 
-		// Story #4) mana gain: New turn starts mana = turnNumber + 1
+		// ----------------------------------------------------
+		// Story #4: Mana Gain = turnNumber + 1 (and update UI)
+		// ----------------------------------------------------
 		int manaForThisTurn = core.turnNumber() + 1;
-		core.getPlayer(core.activePlayer()).setMana(manaForThisTurn);
+
+		if (next == Owner.HUMAN) {
+			core.getHuman().setMana(manaForThisTurn);
+			BasicCommands.setPlayer1Mana(out, new Player(core.getHuman().health(), core.getHuman().mana()));
+		} else {
+			core.getAI().setMana(manaForThisTurn);
+			BasicCommands.setPlayer2Mana(out, new Player(core.getAI().health(), core.getAI().mana()));
+		}
+
+		core.resetUnitsForNewTurn(next);
 	}
 }
