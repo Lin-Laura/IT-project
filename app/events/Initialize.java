@@ -8,7 +8,10 @@ import game.core.Owner;
 import game.core.UnitState;
 import structures.GameState;
 import structures.basic.Card;
+import structures.basic.Tile;
+import structures.basic.Unit;
 import utils.BasicObjectBuilders;
+import utils.StaticConfFiles;
 
 import java.io.File;
 import java.util.Arrays;
@@ -16,6 +19,7 @@ import java.util.Arrays;
 /**
  * Initialize event processor.
  * Story #1: draw 3 cards at start of Human Turn 1
+ * Plus: draw tiles + avatars (minimal additions)
  */
 public class Initialize implements EventProcessor {
 
@@ -49,37 +53,69 @@ public class Initialize implements EventProcessor {
         }
 
         // ----------------------------------------------------
-        // Create two generals and connect to health/damage
+        // Create two generals (backend state)
         // ----------------------------------------------------
-        UnitState humanGeneral = new UnitState(100, Owner.HUMAN, 4, 4, 2, 20);
-        
+        // Player 1 avatar starts at tile [2,3] => (1,2) in 0-index
+        UnitState humanGeneral = new UnitState(100, Owner.HUMAN, 1, 2, 2, 20);
         humanGeneral.setAvatar(true);
 
-        UnitState aiGeneral = new UnitState(200, Owner.AI, 4, 0, 2, 20);
-        
+
+        // Player 2 avatar starts mirrored => tile [8,3] => (7,2) in 0-index
+        UnitState aiGeneral    = new UnitState(200, Owner.AI,    7, 2, 2, 20);
         aiGeneral.setAvatar(true);
 
-        core.placeUnit(humanGeneral, 4, 4);
-        core.placeUnit(aiGeneral, 4, 0);
-
+        /* re: merging conflict - hope
+        i had these in my code for the healing/damage i'm gonna keep them for now
+        but if they are totally useless i will delete
+        */
+      
         core.setHumanAvatar(humanGeneral);
         core.setAIAvatar(aiGeneral);
         
-        // ----------------------------------------------------
-        // Start state
-        // ----------------------------------------------------
-        core.setTurn(1, Owner.HUMAN);
+        core.placeUnit(humanGeneral, 1, 2);
+        core.placeUnit(aiGeneral,    7, 2);
 
-        // Story #4 (minimal start) — many templates start with 2 mana
+        
+        // Start state
+
+        core.setTurn(1, Owner.HUMAN);
         core.getHuman().setMana(2);
         core.getAI().setMana(2);
 
         // Reset actions
         core.resetUnitsForNewTurn(core.activePlayer());
 
-        // ----------------------------------------------------
+        
+        // DRAW BOARD TILES (9x5)
+        for (int x = 0; x < 9; x++) {
+            for (int y = 0; y < 5; y++) {
+                Tile t = BasicObjectBuilders.loadTile(x, y);
+                BasicCommands.drawTile(out, t, 0);
+            }
+        }
+
+        
+        //  DRAW AVATARS (frontend rendering)
+        // Keep SAME ids + coords as UnitState above to avoid breaking anything
+        
+        Tile humanTile = BasicObjectBuilders.loadTile(1, 2);
+        Tile aiTile    = BasicObjectBuilders.loadTile(7, 2);
+
+        Unit humanAvatar = BasicObjectBuilders.loadUnit(StaticConfFiles.humanAvatar, 100, Unit.class);
+        humanAvatar.setPositionByTile(humanTile);
+        BasicCommands.drawUnit(out, humanAvatar, humanTile);
+        BasicCommands.setUnitAttack(out, humanAvatar, 2);
+        BasicCommands.setUnitHealth(out, humanAvatar, 20);
+
+        Unit aiAvatar = BasicObjectBuilders.loadUnit(StaticConfFiles.aiAvatar, 200, Unit.class);
+        aiAvatar.setPositionByTile(aiTile);
+        BasicCommands.drawUnit(out, aiAvatar, aiTile);
+        BasicCommands.setUnitAttack(out, aiAvatar, 2);
+        BasicCommands.setUnitHealth(out, aiAvatar, 20);
+
+        
         // STORY #1: Draw 3 cards at start of Human Turn 1
-        // ----------------------------------------------------
+       
         for (int pos = 1; pos <= 3; pos++) {
             String cfg = core.getHuman().drawTopCardToHand(); // Story #2 handles discard when full
             if (cfg != null) {
