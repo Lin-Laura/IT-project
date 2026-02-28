@@ -57,10 +57,21 @@ public class Initialize implements EventProcessor {
         // ----------------------------------------------------
         // Player 1 avatar starts at tile [2,3] => (1,2) in 0-index
         UnitState humanGeneral = new UnitState(100, Owner.HUMAN, 1, 2, 2, 20);
+        humanGeneral.setAvatar(true);
+
 
         // Player 2 avatar starts mirrored => tile [8,3] => (7,2) in 0-index
         UnitState aiGeneral    = new UnitState(200, Owner.AI,    7, 2, 2, 20);
+        aiGeneral.setAvatar(true);
 
+        /* re: merging conflict - hope
+        i had these in my code for the healing/damage i'm gonna keep them for now
+        but if they are totally useless i will delete
+        */
+      
+        core.setHumanAvatar(humanGeneral);
+        core.setAIAvatar(aiGeneral);
+        
         core.placeUnit(humanGeneral, 1, 2);
         core.placeUnit(aiGeneral,    7, 2);
 
