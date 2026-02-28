@@ -1,6 +1,10 @@
 lazy val root = (project in file("."))
   .enablePlugins(PlayJava)
   .settings(
+
+    //will delete just need this line to run on mac - Hope
+    PlayKeys.fileWatchService := play.dev.filewatch.FileWatchService.polling(2000),
+
     name := "ITSD Card Game 25-26",
     version := "1.1",
     scalaVersion := "2.13.1",

@@ -49,14 +49,22 @@ public class Initialize implements EventProcessor {
         }
 
         // ----------------------------------------------------
-        // Create two generals
+        // Create two generals and connect to health/damage
         // ----------------------------------------------------
         UnitState humanGeneral = new UnitState(100, Owner.HUMAN, 4, 4, 2, 20);
+        
+        humanGeneral.setAvatar(true);
+
         UnitState aiGeneral = new UnitState(200, Owner.AI, 4, 0, 2, 20);
+        
+        aiGeneral.setAvatar(true);
 
         core.placeUnit(humanGeneral, 4, 4);
         core.placeUnit(aiGeneral, 4, 0);
 
+        core.setHumanAvatar(humanGeneral);
+        core.setAIAvatar(aiGeneral);
+        
         // ----------------------------------------------------
         // Start state
         // ----------------------------------------------------
