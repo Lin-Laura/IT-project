@@ -18,9 +18,6 @@ public class CoreGameState {
     private final PlayerState human;
     private final PlayerState ai;
 
-    private UnitState humanAvatar;
-    private UnitState aiAvatar;
-
     private int turnNumber;
     private Owner activePlayer;
 
@@ -204,39 +201,6 @@ public class CoreGameState {
             }
         }
         return res;
-    }
-
-    // ----------------- Avatar Access ---------------------------------
-    public UnitState getHumanAvatar(){
-        return humanAvatar;
-    }
-
-    public UnitState getAIAvatar(){
-        return aiAvatar;
-    }
-
-    public void setHumanAvatar(UnitState u){
-        this.humanAvatar = u;
-    }
-
-    public void setAIAvatar(UnitState u){
-        this.aiAvatar = u;
-    }
-
-    //applying damage to health score
-    public void applyDamageToUnit(UnitState unit, int amount){
-        unit.setHealth(unit.hp() - amount);
-        if (unit.isAvatar()){
-            getPlayer(unit.owner()).setHealth(unit.hp());
-        }
-    }
-
-    // adding health to health score
-    public void applyHealingToUnit(UnitState unit, int amount){
-        unit.setHealth(unit.hp() + amount);
-        if (unit.isAvatar()){
-            getPlayer(unit.owner()).setHealth(unit.hp());
-        }
     }
 
     // internal access — try not to use in other modules
