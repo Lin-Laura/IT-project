@@ -8,6 +8,10 @@ import java.util.Map;
 import game.core.CoreGameState;
 import structures.basic.Unit;
 
+
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Template-facing wrapper.
  * Keep this class stable: other modules import structures.GameState.
@@ -37,6 +41,10 @@ public class GameState {
 	//CoreGameState stores the UnitState,
 	//UI delection will need structures.basic.Unit
 	public final Map<Integer, Unit> uiUnitById = new HashMap<>();
+
+	// Story #31: track which board tiles are currently highlighted (spell targets)
+	// Stored as "x,y" using 0-based board coordinates.
+	public final Set<String> highlightedTargetTiles = new HashSet<>();
 
 
 	// ---- Real game data ----

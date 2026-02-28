@@ -9,12 +9,15 @@ import structures.GameState;
 import structures.basic.Card;
 import structures.basic.Player;
 import utils.BasicObjectBuilders;
+import utils.HighlightUtils;
 
 public class EndTurnClicked implements EventProcessor {
 
 	@Override
 	public void processEvent(ActorRef out, GameState gameState, JsonNode message) {
 
+		HighlightUtils.clearSelectionAndHighlights(out, gameState);
+		
 		CoreGameState core = gameState.core();
 		Owner current = core.activePlayer();
 
