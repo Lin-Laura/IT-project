@@ -1,56 +1,57 @@
-package game.util;
+package utils;
 
-import game.core.CoreGameState;
-import game.core.Owner;
-import game.core.UnitState;
+import structures.GameState;
 import structures.basic.Card;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** Story #31 helper: decides which board tiles are valid targets for a spell. */
+/**
+ * Story #31 helper (single GameState architecture):
+ * decide which board tiles are valid targets for a spell.
+ * Returns list of int[]{x,y} using the SAME coordinate system you store in GameState.key(x,y).
+ */
 public final class SpellTargetRules {
 
     private SpellTargetRules() {}
 
-    /** @return list of int[]{x,y} target tiles (0-based) */
-    public static List<int[]> getValidTargetTiles(CoreGameState core, Card spell, Owner caster) {
-        if (core == null || spell == null || caster == null) return Collections.emptyList();
+    public static List<int[]> getValidTargetTiles(GameState gameState, Card spell) {
+        if (gameState == null || spell == null) return Collections.emptyList();
+
         String name = spell.getCardname();
         if (name == null) return Collections.emptyList();
-
         String n = name.trim().toLowerCase();
-        Owner enemy = (caster == Owner.HUMAN) ? Owner.AI : Owner.HUMAN;
 
-        if (n.equals("truestrike") || n.equals("beamshock")) {
-            return tilesWithUnitsOwnedBy(core, enemy, true);
+        // - boardUnits contains ALL units (including avatars) as UI Units
+        // - avatars are at fixed positions (1,2) and (7,2)
+        int humanAx = 1, humanAy = 2;
+        int aiAx = 7, aiAy = 2;
+
+
+        if (n.equals("truestrike") || n.equals("beamshock") || n.equals("dark terminus")) {
+            // Return all occupied tiles (you can refine later by owner)
+            return tilesWithAnyUnit(gameState);
         }
 
-        if (n.equals("dark terminus")) {
-            return tilesWithUnitsOwnedBy(core, enemy, false);
-        }
-
+        // Sundrop Elixir -> any unit tile
         if (n.equals("sundrop elixir")) {
-            return tilesWithAnyUnit(core);
+            return tilesWithAnyUnit(gameState);
         }
 
+        // Horn of the Forsaken -> target avatar tile (human)
         if (n.equals("horn of the forsaken")) {
-            UnitState avatar = (caster == Owner.HUMAN) ? core.getHumanAvatar() : core.getAIAvatar();
-            if (avatar == null) return Collections.emptyList();
             List<int[]> res = new ArrayList<>();
-            res.add(new int[] { avatar.x(), avatar.y() });
+            res.add(new int[]{humanAx, humanAy});
             return res;
         }
 
+        // Wraithling Swarm -> empty adjacent tiles around avatar (human)
         if (n.equals("wraithling swarm")) {
-            UnitState avatar = (caster == Owner.HUMAN) ? core.getHumanAvatar() : core.getAIAvatar();
-            if (avatar == null) return Collections.emptyList();
-
             List<int[]> res = new ArrayList<>();
-            for (int[] xy : BoardUtils.getAdjacentTiles(avatar.x(), avatar.y())) {
-                if (xy != null && BoardUtils.isTileEmpty(core, xy[0], xy[1])) {
-                    res.add(new int[] { xy[0], xy[1] });
+            for (int[] xy : adjacentTiles(humanAx, humanAy)) {
+                if (xy != null && isOnBoard(xy[0], xy[1]) && isTileEmpty(gameState, xy[0], xy[1])) {
+                    res.add(new int[]{xy[0], xy[1]});
                 }
             }
             return res;
@@ -59,23 +60,35 @@ public final class SpellTargetRules {
         return Collections.emptyList();
     }
 
-    private static List<int[]> tilesWithAnyUnit(CoreGameState core) {
+    private static List<int[]> tilesWithAnyUnit(GameState gameState) {
         List<int[]> res = new ArrayList<>();
-        for (UnitState u : core.getAllUnits()) {
-            if (u == null) continue;
-            res.add(new int[] { u.x(), u.y() });
+        for (String k : gameState.boardUnits.keySet()) {
+            String[] parts = k.split(",");
+            if (parts.length != 2) continue;
+            try {
+                int x = Integer.parseInt(parts[0]);
+                int y = Integer.parseInt(parts[1]);
+                res.add(new int[]{x, y});
+            } catch (NumberFormatException ignored) {}
         }
         return res;
     }
 
-    /** @param includeAvatar if false, avatars are excluded ("creature" only). */
-    private static List<int[]> tilesWithUnitsOwnedBy(CoreGameState core, Owner owner, boolean includeAvatar) {
+    private static boolean isTileEmpty(GameState gameState, int x, int y) {
+        return !gameState.boardUnits.containsKey(gameState.key(x, y));
+    }
+
+    private static boolean isOnBoard(int x, int y) {
+        return x >= 0 && x < 9 && y >= 0 && y < 5;
+    }
+
+    private static List<int[]> adjacentTiles(int x, int y) {
         List<int[]> res = new ArrayList<>();
-        for (UnitState u : core.getAllUnits()) {
-            if (u == null) continue;
-            if (u.owner() != owner) continue;
-            if (!includeAvatar && u.isAvatar()) continue;
-            res.add(new int[] { u.x(), u.y() });
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if (dx == 0 && dy == 0) continue;
+                res.add(new int[]{x + dx, y + dy});
+            }
         }
         return res;
     }

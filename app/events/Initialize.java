@@ -3,11 +3,9 @@ package events;
 import akka.actor.ActorRef;
 import com.fasterxml.jackson.databind.JsonNode;
 import commands.BasicCommands;
-import game.core.CoreGameState;
-import game.core.Owner;
-import game.core.UnitState;
 import structures.GameState;
 import structures.basic.Card;
+import structures.basic.Player;
 import structures.basic.Tile;
 import structures.basic.Unit;
 import utils.BasicObjectBuilders;
@@ -16,66 +14,38 @@ import utils.StaticConfFiles;
 import java.io.File;
 import java.util.Arrays;
 
-/**
- * Initialize event processor.
- * Story #1: draw 3 cards at start of Human Turn 1
- * Plus: draw tiles + avatars (minimal additions)
- */
 public class Initialize implements EventProcessor {
 
     @Override
     public void processEvent(ActorRef out, GameState gameState, JsonNode message) {
 
-        // 1) Mark initialized (used by template tests)
+        // ---- flags used by template/tests ----
         gameState.gameInitialized = true;
         gameState.something = true;
 
-        // 2) Get core state
-        CoreGameState core = gameState.core();
+        // ---- reset basic state  ----
+        gameState.gameOver = false;
+        gameState.winner = null;
 
-        // 3) Reset everything
-        core.resetGame();
+        gameState.turnNumber = 1;
+        gameState.activePlayer = "HUMAN";
 
-        // ----------------------------------------------------
-        // Build decks from conf/gameconfs/cards/
-        // ----------------------------------------------------
-        File dir = new File("conf/gameconfs/cards/");
-        String[] p1 = dir.list((d, name) -> name.startsWith("1_") && name.endsWith(".json"));
-        String[] p2 = dir.list((d, name) -> name.startsWith("2_") && name.endsWith(".json"));
+        // Story #3: starting health = 20
+        gameState.humanHealth = 20;
+        gameState.aiHealth = 20;
 
-        if (p1 != null) {
-            Arrays.sort(p1); // stable "top of deck"
-            for (String f : p1) core.getHuman().deck().add("conf/gameconfs/cards/" + f);
-        }
-        if (p2 != null) {
-            Arrays.sort(p2);
-            for (String f : p2) core.getAI().deck().add("conf/gameconfs/cards/" + f);
-        }
+        // clear runtime state
+        gameState.boardUnits.clear();
+        gameState.uiUnitById.clear();
+        gameState.highlightedTargetTiles.clear();
+
+        gameState.selectedHandPos = null;
+        gameState.selectedCardConfig = null;
+        gameState.selectedCardIsUnit = false;
 
         // ----------------------------------------------------
-        // Create two generals (backend state)
+        // 1) Draw board tiles (9x5)
         // ----------------------------------------------------
-        // Player 1 avatar starts at tile [2,3] => (1,2) in 0-index
-        UnitState humanGeneral = new UnitState(100, Owner.HUMAN, 1, 2, 2, 20);
-
-        // Player 2 avatar starts mirrored => tile [8,3] => (7,2) in 0-index
-        UnitState aiGeneral    = new UnitState(200, Owner.AI,    7, 2, 2, 20);
-
-        core.placeUnit(humanGeneral, 1, 2);
-        core.placeUnit(aiGeneral,    7, 2);
-
-        
-        // Start state
-
-        core.setTurn(1, Owner.HUMAN);
-        core.getHuman().setMana(2);
-        core.getAI().setMana(2);
-
-        // Reset actions
-        core.resetUnitsForNewTurn(core.activePlayer());
-
-        
-        // DRAW BOARD TILES (9x5)
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 5; y++) {
                 Tile t = BasicObjectBuilders.loadTile(x, y);
@@ -83,34 +53,71 @@ public class Initialize implements EventProcessor {
             }
         }
 
-        
-        //  DRAW AVATARS (frontend rendering)
-        // Keep SAME ids + coords as UnitState above to avoid breaking anything
-        
-        Tile humanTile = BasicObjectBuilders.loadTile(1, 2);
-        Tile aiTile    = BasicObjectBuilders.loadTile(7, 2);
+        // ----------------------------------------------------
+        // 2) Draw avatars
+        // ----------------------------------------------------
+        int hx = 1, hy = 2;
+        int ax = 7, ay = 2;
+
+        Tile humanTile = BasicObjectBuilders.loadTile(hx, hy);
+        Tile aiTile = BasicObjectBuilders.loadTile(ax, ay);
 
         Unit humanAvatar = BasicObjectBuilders.loadUnit(StaticConfFiles.humanAvatar, 100, Unit.class);
         humanAvatar.setPositionByTile(humanTile);
         BasicCommands.drawUnit(out, humanAvatar, humanTile);
+        sleep(80);
         BasicCommands.setUnitAttack(out, humanAvatar, 2);
+        sleep(80);
         BasicCommands.setUnitHealth(out, humanAvatar, 20);
+        sleep(80);
 
         Unit aiAvatar = BasicObjectBuilders.loadUnit(StaticConfFiles.aiAvatar, 200, Unit.class);
         aiAvatar.setPositionByTile(aiTile);
         BasicCommands.drawUnit(out, aiAvatar, aiTile);
+        sleep(80);
         BasicCommands.setUnitAttack(out, aiAvatar, 2);
+        sleep(80);
         BasicCommands.setUnitHealth(out, aiAvatar, 20);
+        sleep(80);
 
-        
-        // STORY #1: Draw 3 cards at start of Human Turn 1
-       
-        for (int pos = 1; pos <= 3; pos++) {
-            String cfg = core.getHuman().drawTopCardToHand(); // Story #2 handles discard when full
-            if (cfg != null) {
-                Card c = BasicObjectBuilders.loadCard(cfg, pos, Card.class);
-                if (c != null) BasicCommands.drawCard(out, c, pos, 0);
+        // track on board
+        gameState.boardUnits.put(gameState.key(hx, hy), humanAvatar);
+        gameState.boardUnits.put(gameState.key(ax, ay), aiAvatar);
+        gameState.uiUnitById.put(100, humanAvatar);
+        gameState.uiUnitById.put(200, aiAvatar);
+
+        // ----------------------------------------------------
+        // 3) Story #3: Set player UI health to 20
+        // ----------------------------------------------------
+        BasicCommands.setPlayer1Health(out, new Player(gameState.humanHealth, gameState.humanMana));
+        BasicCommands.setPlayer2Health(out, new Player(gameState.aiHealth, gameState.aiMana));
+
+        // ----------------------------------------------------
+        // 4) Story #1: Draw 3 cards for human
+        // ----------------------------------------------------
+        File dir = new File("conf/gameconfs/cards/");
+        String[] p1 = dir.list((d, name) -> name.startsWith("1_") && name.endsWith(".json"));
+
+        if (p1 != null) {
+            Arrays.sort(p1);
+            for (int i = 0; i < 3 && i < p1.length; i++) {
+                String cfg = "conf/gameconfs/cards/" + p1[i];
+                int handPos = i + 1;
+                int cardId = 1000 + handPos;
+
+                Card c = BasicObjectBuilders.loadCard(cfg, cardId, Card.class);
+                if (c != null) {
+                    BasicCommands.drawCard(out, c, handPos, 0);
+                }
             }
+        }
+    }
+
+    // small UI sync delay
+    private void sleep(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException ignored) {
         }
     }
 }

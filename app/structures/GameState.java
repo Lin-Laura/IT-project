@@ -1,61 +1,53 @@
 package structures;
 
-import game.core.CoreGameState;
+import java.util.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import game.core.CoreGameState;
 import structures.basic.Unit;
 
-
-import java.util.HashSet;
-import java.util.Set;
-
-/**
- * Template-facing wrapper.
- * Keep this class stable: other modules import structures.GameState.
- */
 public class GameState {
 
-	// ---- Compatibility flags (events may still reference these) ----
-	public boolean gameInitialized = false;   // MUST match Initiali！z！e.java spelling
+	// ---- Template flags ----
+	public boolean gameInitialized = false;
 	public boolean something = false;
 
 	// ---- Game end state ----
 	public boolean gameOver = false;
-	public game.core.Owner winner = null; // HUMAN or AI
+	public String winner = null; // "HUMAN" or "AI"
 
-	// --- Card selection state ---
-	public Integer selectedHandPos = null;     // 1..6
-	public String selectedCardConfig = null;   // path to conf/gameconfs/cards/*.json
-	public boolean selectedCardIsUnit = false;
+	// ---- Players ----
+	public int humanHealth = 20;
+	public int aiHealth = 20;
 
-	// --- Unit id generator ---
+	public int humanMana = 0;
+	public int aiMana = 0;
+
+	// ---- Turn ----
+	public int turnNumber = 1;
+	public String activePlayer = "HUMAN";
+
+	// ---- Units on board ----
+	// key = "x,y"
+	public final Map<String, Unit> boardUnits = new HashMap<>();
+
+	// ---- Unit id generator ----
 	public int nextUnitId = 1000;
 	public int allocateUnitId() {
-    return nextUnitId++;
+		return nextUnitId++;
 	}
 
-	//story card #13. mapping unitId -> UI Unit object
-	//CoreGameState stores the UnitState,
-	//UI delection will need structures.basic.Unit
+	// ---- Card selection ----
+	public Integer selectedHandPos = null;
+	public String selectedCardConfig = null;
+	public boolean selectedCardIsUnit = false;
+
+	// ---- UI Unit mapping ----
 	public final Map<Integer, Unit> uiUnitById = new HashMap<>();
 
-	// Story #31: track which board tiles are currently highlighted (spell targets)
-	// Stored as "x,y" using 0-based board coordinates.
+	// ---- Highlighted tiles ----
 	public final Set<String> highlightedTargetTiles = new HashSet<>();
 
-
-	// ---- Real game data ----
-	private final CoreGameState core;
-	public boolean gameInitalized;
-
-	public GameState() {
-		this.core = new CoreGameState();
-	}
-
-	public CoreGameState core() {
-		return core;
+	// ---- Helpers ----
+	public String key(int x, int y) {
+		return x + "," + y;
 	}
 }
