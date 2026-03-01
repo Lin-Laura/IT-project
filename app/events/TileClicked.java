@@ -16,6 +16,7 @@ import structures.basic.Tile;
 import structures.basic.Unit;
 import utils.BasicObjectBuilders;
 import utils.StaticConfFiles;
+import utils.HighlightUtils;
 
 public class TileClicked implements EventProcessor {
 
@@ -30,8 +31,8 @@ public class TileClicked implements EventProcessor {
         int tilex = message.get("tilex").asInt(); // 1-based
         int tiley = message.get("tiley").asInt(); // 1-based
 
-        int x = tilex - 1; // convert to 0-based for core board
-        int y = tiley - 1;
+        int x = tilex ; // convert to 0-based for core board
+        int y = tiley ;
 
         // Story #25 only triggers if a unit card was selected
         if (gameState.selectedHandPos == null) return;
@@ -93,6 +94,7 @@ public class TileClicked implements EventProcessor {
         }
 
         // 7) clear selection
+        HighlightUtils.clearHighlightedTiles(out, gameState);
         gameState.selectedHandPos = null;
         gameState.selectedCardConfig = null;
         gameState.selectedCardIsUnit = false;

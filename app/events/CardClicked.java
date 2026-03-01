@@ -5,10 +5,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import commands.BasicCommands;
 import game.core.CoreGameState;
 import game.core.Owner;
+import game.util.SpellTargetRules;
 import structures.GameState;
 import structures.basic.Card;
-import structures.basic.Player;
 import utils.BasicObjectBuilders;
+import utils.HighlightUtils;
 
 public class CardClicked implements EventProcessor {
 
@@ -28,21 +29,27 @@ public class CardClicked implements EventProcessor {
         Card card = BasicObjectBuilders.loadCard(cardConfig, handPosition, Card.class);
         if (card == null) return;
 
-        // must be a unit card 
-        if (!card.isCreature()) return;
-
-        // must have enough mana to play
+        // must have enough mana to play before we show any targeting UI
         if (core.getHuman().mana() < card.getManacost()) {
             BasicCommands.addPlayer1Notification(out, "Not enough mana", 2);
             return;
         }
 
+        // clear any previous selection/highlights
+        HighlightUtils.clearSelectionAndHighlights(out, gameState);
+
         // store selection
         gameState.selectedHandPos = handPosition;
         gameState.selectedCardConfig = cardConfig;
-        gameState.selectedCardIsUnit = true;
+        gameState.selectedCardIsUnit = card.isCreature();
 
-        // optional: visually highlight selected card
+        // highlight selected card
         BasicCommands.drawCard(out, card, handPosition, 1);
+
+        // Story #31: if a spell is selected, highlight valid target tiles in red
+        if (!card.isCreature()) {
+            HighlightUtils.highlightTilesRed(out, gameState,
+                    SpellTargetRules.getValidTargetTiles(core, card, Owner.HUMAN));
+        }
     }
 }
