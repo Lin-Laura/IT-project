@@ -18,7 +18,6 @@ public class UnitState {
     private boolean hasMovedThisTurn;
     private boolean hasAttackedThisTurn;
     private boolean isStunned;
-    private boolean isAvatar;
 
     private final Set<String> keywords;
 
@@ -60,12 +59,7 @@ public class UnitState {
 
     public Set<String> keywords() { return keywords; }
 
-    // getters for avatar
-    public boolean isAvatar(){
-        return isAvatar;
-    }
-
-    // -------------- state update/setters ---------------
+    // ---------------- state update ----------------
 
     public void setPosition(int x, int y) {
         this.x = x;
@@ -99,13 +93,5 @@ public class UnitState {
 
     public void clearStun() {
         this.isStunned = false;
-    }
-
-    public void setAvatar(boolean isAvatar){
-        this.isAvatar = isAvatar;
-    }
-
-    public void setHealth(int hp){
-        this.hp = hp;
     }
 }
